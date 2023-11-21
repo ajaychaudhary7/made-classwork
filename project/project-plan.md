@@ -22,4 +22,8 @@ Data source for this specific problem is Kaggle, a well-known platform for data 
 Datasource1, referred to as Kaggle, comprises two distinct CSV files available on Kaggle. These files contain essential columns such as Product Name, Engine Version, App Version, and more. The purpose of these datasets is for training and testing in the context of the malware detection problem. The structured data within these CSV files serves as the foundation for our analysis and machine learning model development.
 
 ## Work Packages
-Work in progress
+Pandas
+Numpy
+Matplotlib
+zipfile
+...more to be added
