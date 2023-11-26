@@ -1,0 +1,81 @@
+pipeline TrainStops {
+    // Assumption: blocks "GasReserveHttpExtractor", "GasReserveCSVInterpreter", "GasReserveTableInterpreter", and "GasReserveLoader" are defined
+
+    Extractor
+        -> TextInterpreter
+        -> CsvInterpreter
+        -> DropStatus
+        -> TableInterpreter
+        -> LoadData;
+
+    block Extractor oftype HttpExtractor {
+        url: "https://download-data.deutschebahn.com/static/datasets/haltestellen/D_Bahnhof_2020_alle.CSV";
+    }
+
+    block TextInterpreter oftype TextFileInterpreter{
+
+    }
+
+    block CsvInterpreter oftype CSVInterpreter {
+        delimiter: ";";
+    }
+
+    block DropStatus oftype ColumnDeleter {
+        delete: [column J];
+    }
+
+    block TableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "EVA_NR" oftype integer,
+            "DS100" oftype text,
+            "IFOPT" oftype IFOPTInput,
+            "NAME" oftype text,
+            "Verkehr" oftype VerkehrInput,
+            "Laenge" oftype LaengeInput,
+            "Breite" oftype BreiteInput,
+            "Betreiber_Name" oftype text,
+            "Betreiber_Nr" oftype integer,
+        ];
+    }
+
+    block LoadData oftype SQLiteLoader {
+        table: "trainstops";
+        file: "./trainstops.sqlite";
+    }
+}
+
+valuetype VerkehrInput oftype text {
+    constraints: [VerkehrValues];
+}
+
+constraint VerkehrValues oftype AllowlistConstraint {
+    allowlist: ['FV', 'RV', 'nur DPN'];
+}
+
+
+valuetype LaengeInput oftype decimal {
+    constraints: [LaengeConstraint];
+}
+
+constraint LaengeConstraint oftype RangeConstraint {
+    lowerBound: -90;
+    upperBound: 90;
+}
+
+valuetype BreiteInput oftype decimal {
+    constraints: [BreiteConstraint];
+}
+
+constraint BreiteConstraint oftype RangeConstraint{
+    lowerBound: -90;
+    upperBound: 90;
+}
+
+valuetype IFOPTInput oftype text {
+    constraints: [IFOPTs];
+}
+
+constraint IFOPTs oftype RegexConstraint {
+    regex: /^.{2}:\d+:\d+(:\d+)?$/;
+}
