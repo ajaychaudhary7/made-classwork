@@ -1,0 +1,29 @@
+name: Run tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # Code Checkout 
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+    
+    - name: Install dependencies
+      run: |
+        pip install sqlalchemy pandas numpy gc sqlite3
+
+    - name: Run tests
+      run: |
+        chmod +x project/test.sh
+        ./project/test.sh
