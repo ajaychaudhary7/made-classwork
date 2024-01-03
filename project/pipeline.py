@@ -67,7 +67,7 @@ def load_and_transform(df,train=True):
 def delete_zip(zip_path):
     os.remove(zip_path)
 
-if __name__ == "__main__":
+def return_dtypes():
     dtypes = {
         'MachineIdentifier':                                    'category',
         'ProductName':                                          'category',
@@ -153,6 +153,10 @@ if __name__ == "__main__":
         'Wdft_RegionIdentifier':                                'float16',
         'HasDetections':                                        'int8'
         }
+    return dtypes
+
+if __name__ == "__main__":
+    dtypes = return_dtypes()
 
     kaggle_competition_name = "microsoft-malware-prediction"
     output_directory = "../data/"
