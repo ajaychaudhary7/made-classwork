@@ -26,4 +26,5 @@ Pandas
 Numpy
 Matplotlib
 zipfile
+sqlite3
 ...more to be added
