@@ -21,7 +21,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install sqlalchemy pandas numpy gc sqlite3 matplotlib zipfile
+        pip install sqlalchemy pandas numpy pysqlite3 matplotlib
 
     - name: Run tests
       run: |
