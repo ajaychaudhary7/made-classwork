@@ -27,6 +27,12 @@ jobs:
       run: |
         pip install kaggle
         echo "$HOME/.local/bin" >> $GITHUB_PATH
+    
+    - name: Set up Kaggle API credentials
+      run: |
+        mkdir -p $HOME/.kaggle
+        echo "$KAGGLE_API_KEY" > $HOME/.kaggle/kaggle.json
+        chmod 600 $HOME/.kaggle/kaggle.json
 
     - name: Run tests
       run: |
