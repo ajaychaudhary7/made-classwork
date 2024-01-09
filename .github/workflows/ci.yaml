@@ -31,8 +31,11 @@ jobs:
     - name: Set up Kaggle API credentials
       run: |
         mkdir -p $HOME/.kaggle
-        echo "$KAGGLE_API_KEY" > $HOME/.kaggle/kaggle.json
+        echo "{\"username\":\"$KAGGLE_USERNAME\",\"key\":\"$KAGGLE_API_KEY\"}" > $HOME/.kaggle/kaggle.json
         chmod 600 $HOME/.kaggle/kaggle.json
+      env:
+        KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+        KAGGLE_API_KEY: ${{ secrets.KAGGLE_API_KEY }}
 
     - name: Run tests
       run: |
