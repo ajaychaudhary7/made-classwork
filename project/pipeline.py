@@ -8,7 +8,7 @@ import numpy as np
 import gc
 
 def download_kaggle_competition_data(competition_name, output_directory):
-    competition_command = f"kaggle competitions download -c {competition_name} -p {output_directory}"
+    competition_command = f"kaggle datasets download -d {competition_name} -p {output_directory}"
     subprocess.run(competition_command, shell=True)
 
 def extract_zip(zip_path, output_directory):
@@ -158,27 +158,27 @@ def return_dtypes():
 if __name__ == "__main__":
     dtypes = return_dtypes()
 
-    kaggle_competition_name = "microsoft-malware-prediction"
+    kaggle_dataset_name = "ajay19/microsoft-malware-prediction-subset"
     output_directory = "../data/"
     
     print("Output directory before downloading:", os.path.abspath(output_directory))
     
     os.environ["KAGGLE_CONFIG_DIR"] = os.path.expanduser("~/.kaggle/")
-    download_kaggle_competition_data(kaggle_competition_name, output_directory)
+    download_kaggle_competition_data(kaggle_dataset_name, output_directory)
     
-    zip_filename = os.path.join(output_directory, f"{kaggle_competition_name}.zip")
+    zip_filename = os.path.join(output_directory, f"{kaggle_dataset_name.split('/')[1]}.zip")
     extract_zip(zip_filename, output_directory)
     
     print("Output directory after extracting:", os.path.abspath(output_directory))
     
     delete_zip(zip_filename)
-    train_df = pd.read_csv(os.path.join(os.path.abspath(output_directory),'train.csv'),low_memory=False)
+    train_df = pd.read_csv(os.path.join(os.path.abspath(output_directory),'train_sub.csv'),low_memory=False)
     train_df, good_cols = load_and_transform(train_df,train=True)
     convert_to_db(os.path.join(os.path.abspath(output_directory),'train.sqlite'),train_df,'train')
     del train_df
     gc.collect()
     test_dtypes = {k: v for k, v in dtypes.items() if k in good_cols}
-    test_df = pd.read_csv(os.path.join(os.path.abspath(output_directory),'test.csv'),usecols=good_cols[:-1],low_memory=False)
+    test_df = pd.read_csv(os.path.join(os.path.abspath(output_directory),'test_sub.csv'),usecols=good_cols[:-1],low_memory=False)
     test_df = load_and_transform(test_df,train=False)
     convert_to_db(os.path.join(os.path.abspath(output_directory),'test.sqlite'),test_df,'test')
     del test_df
