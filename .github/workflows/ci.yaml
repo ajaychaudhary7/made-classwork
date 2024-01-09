@@ -22,6 +22,11 @@ jobs:
     - name: Install dependencies
       run: |
         pip install sqlalchemy pandas numpy pysqlite3 matplotlib
+    
+    - name: Install kaggle CLI
+      run: |
+        pip install kaggle
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - name: Run tests
       run: |
