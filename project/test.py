@@ -13,7 +13,7 @@ from pipeline import (
 
 def test_dataset_content(output_directory):
     z = 0
-    files_to_check = ['test.csv', 'train.csv', 'sample_submission.csv']
+    files_to_check = ['test_sub.csv', 'train_sub.csv']
     for file_name in files_to_check:
         file_path = os.path.join(output_directory, file_name)
         if os.path.exists(file_path):
@@ -29,11 +29,11 @@ def test_dataset_content(output_directory):
 
 def test_dataset_transformation(output_directory):
     dtypes = return_dtypes()
-    train_df = pd.read_csv(os.path.join(os.path.abspath(output_directory),'train.csv'),low_memory=False)
+    train_df = pd.read_csv(os.path.join(os.path.abspath(output_directory),'train_sub.csv'),low_memory=False)
     train_df, good_cols = load_and_transform(train_df,train=True)
 
     test_dtypes = {k: v for k, v in dtypes.items() if k in good_cols}
-    test_df = pd.read_csv(os.path.join(os.path.abspath(output_directory),'test.csv'),usecols=good_cols[:-1],low_memory=False)
+    test_df = pd.read_csv(os.path.join(os.path.abspath(output_directory),'test_sub.csv'),usecols=good_cols[:-1],low_memory=False)
     test_df = load_and_transform(test_df,train=False)
     min_rows_required = 50000
     if len(train_df) >= min_rows_required and len(test_df) >= min_rows_required:
