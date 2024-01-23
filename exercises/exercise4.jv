@@ -1,0 +1,75 @@
+// Convert °F to °C
+transform celsius_to_fahrenheit_function {
+    from temp_in_celsius oftype decimal;
+    to temp_in_F oftype decimal;
+    temp_in_F: temp_in_celsius * 9/5 + 32;
+}
+
+pipeline Temperature {
+
+    temp_extractor
+        ->temp_archive_interpreter
+        ->temp_file_picker
+        ->temp_interpreter
+        ->csv_interpreter
+        ->drop_columns
+        ->convert_2_table
+        ->temp_transform
+        ->battery_transform
+        ->load_data;
+
+    
+    block temp_extractor oftype HttpExtractor {
+        url: "https://www.mowesta.com/data/measure/mowesta-dataset-20221107.zip";
+    }
+
+    block convert_2_table oftype TableInterpreter {
+        header: false;
+        columns: [
+            "Geraet" oftype integer,
+            "Hersteller" oftype text,
+            "Model" oftype text,
+            "Monat" oftype integer,
+            "Temperatur" oftype decimal,
+            "Batterietemperatur" oftype decimal,
+            "Geraet aktiv" oftype text,
+        ];
+    }
+
+    block temp_archive_interpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+
+    block temp_file_picker oftype FilePicker {
+        path: "/data.csv";
+    }
+
+    block temp_interpreter oftype TextFileInterpreter{
+        
+    }
+
+    block csv_interpreter oftype CSVInterpreter {
+        delimiter: ";";
+    }
+
+    block drop_columns oftype ColumnDeleter {
+        delete: [column F, column G, column H, column I,  column L, column M, column N, column O];
+    }
+
+    block temp_transform oftype TableTransformer {
+        inputColumns: ['Temperatur'];
+        outputColumn: 'Temperatur';
+        use: celsius_to_fahrenheit_function;
+    }
+    
+    block battery_transform oftype TableTransformer {
+        inputColumns: ['Batterietemperatur'];
+        outputColumn: 'Batterietemperatur';
+        use: celsius_to_fahrenheit_function;
+    }
+
+    block load_data oftype SQLiteLoader {
+        table: "temperatures";
+        file: "./temperatures.sqlite";
+    }
+}
